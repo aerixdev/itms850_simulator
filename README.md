@@ -51,7 +51,7 @@ python itms850_simul.py
 |'voltage'| Object | 전압 데이터 생성 옵션 |
 |'current'| Object | 전류 데이터 생성 옵션 |
 |'power'| Object | 전력 데이터 생성 옵션 |
-|'active_power'| Object | 유료전력 데이터 생성 옵션 |
+|'active_power'| Object | 유효전력 데이터 생성 옵션 |
 
 각각의 데이터 생성 옵션은 다음과 같이 구성됩니다.
 | Key | Data Type | Description |
