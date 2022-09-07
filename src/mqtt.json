@@ -1,0 +1,6 @@
+{
+    "server" : "data.thingarx.com",
+    "port" : 1883,
+    "topic" : "tharx/combo/data/lap01",
+    "interval" : 5
+}

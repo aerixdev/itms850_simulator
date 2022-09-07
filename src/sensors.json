@@ -1,0 +1,52 @@
+{
+    "di1":{
+        "min" : 0,
+        "max" : 1
+    },
+    "di2":{
+        "value" : 0
+    },
+    "di3":{
+        "value" : 1
+    },
+    "di4":{
+        "min" : 0,
+        "max" : 1
+    },
+    "ai1":{
+        "min" : 4000,
+        "max" : 20000
+    },
+    "ai2":{
+        "min" : 4000,
+        "max" : 20000
+    },
+    "diff_pres":{
+        "min" : 0,
+        "max" : 1000
+    },
+    "pressure":{
+        "min" : 0,
+        "max" : 10000
+    },
+    "temperature":{
+        "min" : 0,
+        "max" : 25000
+    },
+    "voltage":{
+        "min" : 0,
+        "max" : 1000
+    },
+    "current":{
+        "min" : 0,
+        "max" : 1000000000
+    },
+    "power":{
+        "min" : 0,
+        "max" : 1000000
+    },
+    "active_power":{
+        "min" : 0,
+        "max" : 1000000
+    }
+}

@@ -12,4 +12,4 @@
 
 ## 관련 Repository ##
 
-[스마트콤보(제품명 : ITMS-850) 데이터 MQTT 수신 예제](https://github.com/aerixdev/itms850_dataparser)
+[스마트콤보(제품명 : ITMS-850) 데이터 MQTT 수신 예제](https://github.com/aerixdev/itms850_dataparser){:target="_blank"}
