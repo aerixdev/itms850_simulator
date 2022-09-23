@@ -70,6 +70,7 @@ def get_message(data,eui,gateway_id):
     
     payload = [1]
 
+
     header = 0
     header = header | (data['di4'] << 3)
     header = header | (data['di3'] << 2)
@@ -85,24 +86,31 @@ def get_message(data,eui,gateway_id):
 
     payload.append(data['diff_pres'] >> 8)
     payload.append(data['diff_pres'] & 0x00FF)
+
     payload.append(data['pressure'] >> 8)
     payload.append(data['pressure'] & 0x00FF)
-    
+
     payload.append(data['temperature'] >> 8)
     payload.append(data['temperature'] & 0x00FF)
     
     payload.append(data['voltage'] >> 8)
     payload.append(data['voltage'] & 0x00FF)
-    
+
     payload.append((data['current'] & 0xFF000000) >> 24)
     payload.append((data['current'] & 0x00FF0000) >> 16)
     payload.append((data['current'] & 0x0000FF00) >> 8)
     payload.append(data['current'] & 0x000000FF)
-    
+
     payload.append((data['power'] & 0xFF000000) >> 24)
     payload.append((data['power'] & 0x00FF0000) >> 16)
     payload.append((data['power'] & 0x0000FF00) >> 8)
     payload.append(data['power'] & 0x000000FF)
+
+
+    payload.append((data['active_power'] & 0xFF000000) >> 24)
+    payload.append((data['active_power'] & 0x00FF0000) >> 16)
+    payload.append((data['active_power'] & 0x0000FF00) >> 8)
+    payload.append(data['active_power'] & 0x000000FF)
 
     msg['payload'] = payload
     msg['gateway_id'] = gateway_id
