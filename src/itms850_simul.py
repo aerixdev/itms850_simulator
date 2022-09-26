@@ -48,7 +48,23 @@ MQTT 브로커로 전송할 임의의 센서 데이터를 생성하는 함수
 '''
 def generate_sensor_value(sensors):
     result = {}
+    for key in sensors: #di1
+        option = sensors[key]
+        if 'value' in option:
+            result[key] = option['value']
+        else:
+            min = option['min']
+            max = option['max']
+            result[key] = random.randrange(min,max+1)
+    
+    return result
+
+def generate_newsensor_value(sensors):
+    result = {}
     for key in sensors:
+        
+        if key == 'id':
+            continue
         option = sensors[key]
         if 'value' in option:
             result[key] = option['value']
@@ -62,6 +78,77 @@ def generate_sensor_value(sensors):
 '''
 임의의 값으로 생성된 센서 데이터를 MQTT 메시지로 변환하는 함수
 '''
+def get_new_message(data,eui,gateway_id,sensors_config):
+    msg = {}
+ 
+    msg['time'] = str(datetime.datetime.now()).replace(' ','T')+'Z'
+    msg['eui'] = eui
+    
+    payload = {}
+    payload['id'] = sensors_config["id"]
+
+
+    di = [data['di1'],data['di2'],data['di3'],data['di4']]
+    payload['di'] = di
+    
+    aidatas =[]
+    aidata = {}
+    result = {}
+    for key in sensors_config: 
+        if "ai" in key:
+            result = sensors_config[key]
+            aidata['type'] = result['type']
+            aidata['value'] = data[key]
+            aidata['unit'] = result['unit']
+            aidata['code'] = result['code']
+            aidatas.append(aidata)
+
+    payload['ai'] = aidatas
+        
+    pressure ={}
+    pressure['value'] = data['pressure']
+    pressure['unit'] = sensors_config['pressure']['unit']
+    pressure['code'] = sensors_config['pressure']['code']
+    payload['pressure'] = pressure
+
+    diff_pressure ={}
+    diff_pressure['value'] = data['diff_pressure']
+    diff_pressure['unit'] = sensors_config['diff_pressure']['unit']
+    diff_pressure['code'] = sensors_config['diff_pressure']['code']
+    payload['diff_pressure'] = diff_pressure
+
+    temperature ={}
+    temperature['value'] = data['temperature']
+    temperature['unit'] = sensors_config['temperature']['unit']
+    temperature['code'] = sensors_config['temperature']['code']
+    payload['temperature'] = temperature
+
+    voltage ={}
+    voltage['value'] = data['voltage']
+    voltage['unit'] = sensors_config['voltage']['unit']
+    payload['voltage'] = voltage
+   
+    current ={}
+    current['value'] = data['current']
+    current['unit'] = sensors_config['current']['unit']
+    current['code'] = sensors_config['current']['code']
+    payload['current'] = current
+
+    active_power ={}
+    active_power['value'] = data['active_power']
+    active_power['unit'] = sensors_config['active_power']['unit']
+    payload['active_power'] = active_power
+
+    energy ={}
+    energy['value'] = data['energy']
+    energy['unit'] = sensors_config['energy']['unit']
+    payload['energy'] = energy
+
+    msg['payload'] = payload
+    msg['gateway_id'] = gateway_id
+
+    return msg
+
 def get_message(data,eui,gateway_id):
     msg = {}
  
@@ -117,6 +204,62 @@ def get_message(data,eui,gateway_id):
 
     return msg
 
+
+def get_lora_message(data,eui,gateway_id):
+    msg = {}
+ 
+    msg['time'] = str(datetime.datetime.now()).replace(' ','T')+'Z'
+    msg['eui'] = eui
+    
+    payload = [1]
+
+
+    header = 0
+    header = header | (data['di4'] << 7)
+    header = header | (data['di4'] << 6)
+    header = header | (data['di3'] << 5)
+    header = header | (data['di2'] << 4)
+    header = header | (data['di4'] << 3)
+    header = header | (data['di3'] << 2)
+    header = header | (data['di2'] << 1)
+    header = header | (data['di1'])
+
+    payload.append(header)
+
+    payload.append(data['ai1'] >> 8)
+    payload.append(data['ai1'] & 0x00FF)
+    payload.append(data['ai2'] >> 8)
+    payload.append(data['ai2'] & 0x00FF)
+    payload.append(data['ai3'] >> 8)
+    payload.append(data['ai3'] & 0x00FF)
+    payload.append(data['ai4'] >> 8)
+    payload.append(data['ai4'] & 0x00FF)
+
+    msg['payload'] = payload
+    msg['rssi'] = data['rssi']
+    msg['apid'] = gateway_id
+
+    return msg
+
+def get_modbus_message(data,eui,gateway_id):
+    msg = {}
+ 
+    msg['time'] = str(datetime.datetime.now()).replace(' ','T')+'Z'
+    msg['eui'] = eui
+    
+    payload = [3]
+
+    payload.append(data['energy1'] >> 24)
+    payload.append(data['energy1'] >> 16 & 0x00FF)
+    payload.append(data['energy1'] >> 8 & 0x00FF )
+    payload.append(data['energy1'] & 0x00FF)
+
+    msg['payload'] = payload
+    msg['rssi'] = data['rssi']
+    msg['apid'] = gateway_id
+
+    return msg
+
 '''
 json 설정 파일을 읽어오는 함수
 '''
@@ -167,24 +310,24 @@ def main():
     port = mqtt_config['port']
     topic = mqtt_config['topic']
     interval = mqtt_config['interval']
+    
 
     logger.info("server : {}".format(server))
     logger.info("port : {}".format(port))
     logger.info("topic : {}".format(topic))
     logger.info("interval : {}".format(interval))
 
-    # 임의의 센서 데이터 생성 정보는 sensors.json 파일에서 읽어옵니다.
-    sensors_config = get_config("./sensors.json")
-    logger.info("sensors.json : loaded")
-
-    for key in sensors_config:
-        logger.info("{} : {}".format(key,sensors_config[key]))
 
     # 디바이스 정보는 device.json 파일에서 읽어옵니다.
     device_config = get_config("./device.json")
     logger.info("device.json : loaded")
     eui = device_config['eui']
     gateway_id = device_config['gateway_id']
+    mode = device_config['mode']
+    
+    # 임의의 센서 데이터 생성 정보는 sensors.json 파일에서 읽어옵니다.
+    sensors_config = get_config("./sensors.json")
+    logger.info("newsensors.json : loaded")
 
     for key in sensors_config:
         logger.info("{} : {}".format(key,sensors_config[key]))
@@ -192,16 +335,55 @@ def main():
     # MQTT 브로커에 접속 및 메시지 발행
     client.connect(server,port)
     while(True):
-        data = generate_sensor_value(sensors_config)
-        logger.info("random sensor data is generated : {}".format(data))
-        #client.publish(json.dumps(data))
         
-        msg = get_message(data,eui,gateway_id)
-        logger.info("mqtt message is generated : {}".format(msg))
+        if mode == "old":
+            data = generate_sensor_value(sensors_config)
+            logger.info("random sensor data is generated : {}".format(data))
+            #client.publish(json.dumps(data))
+        
+            msg = get_message(data,eui,gateway_id)
+            logger.info("mqtt message is generated : {}".format(msg))
 
-        client.publish(payload=json.dumps(msg).replace(' ',''),topic=topic)
+            client.publish(payload=json.dumps(msg).replace(' ',''),topic=topic)
 
-        time.sleep(interval)
+            time.sleep(interval)
+            
+        elif mode == "new": 
+            data = generate_newsensor_value(sensors_config)
+            logger.info("random sensor data is generated : {}".format(data))
+            #client.publish(json.dumps(data))
+        
+            msg = get_new_message(data,eui,gateway_id,sensors_config)
+            logger.info("mqtt message is generated : {}".format(msg))
+
+            client.publish(payload=json.dumps(msg).replace(' ',''),topic=topic)
+
+            time.sleep(interval)
+            
+        elif mode == "lora": 
+            data = generate_sensor_value(sensors_config)
+            logger.info("random sensor data is generated : {}".format(data))
+            #client.publish(json.dumps(data))
+        
+            msg = get_lora_message(data,eui,gateway_id)
+            logger.info("mqtt message is generated : {}".format(msg))
+
+            client.publish(payload=json.dumps(msg).replace(' ',''),topic=topic)
+
+            time.sleep(interval)
+            
+        elif mode == "modbus": 
+            data = generate_sensor_value(sensors_config)
+            logger.info("random sensor data is generated : {}".format(data))
+            #client.publish(json.dumps(data))
+        
+            msg = get_modbus_message(data,eui,gateway_id)
+            logger.info("mqtt message is generated : {}".format(msg))
+
+            client.publish(payload=json.dumps(msg).replace(' ',''),topic=topic)
+
+            time.sleep(interval)
+            
 
 if __name__=="__main__":
     main()

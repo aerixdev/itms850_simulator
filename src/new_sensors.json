@@ -1,0 +1,123 @@
+{
+	"id": 0,
+	"di1": {
+		"min": 0,
+		"max": 1
+	},
+	"di2": {
+		"min": 0,
+		"max": 1
+	},
+	"di3": {
+		"min": 0,
+		"max": 1
+	},
+	"di4": {
+		"min": 0,
+		"max": 1
+	},
+	"ai1": {
+		"type": "default",
+		"min": 0,
+		"max": 24,
+		"unit": "mA",
+		"code": "E0001"
+	},
+	"ai2": {
+		"type": "temperature",
+		"min": -200,
+		"max": 200,
+		"unit": "C",
+		"code": "P0001"
+	},
+	"ai3": {
+		"type": "pressure",
+
+		"min": 0,
+		"max": 100000,
+		"unit": "mmH2O",
+		"code": "P0001"
+	},
+	"ai4": {
+		"type": "ph",
+
+		"min": 0,
+		"max": 14,
+		"unit": "",
+		"code": "P0001"
+	},
+	"ai5": {
+		"type": "current",
+
+		"min": 0,
+		"max": 1000000,
+		"unit": "A",
+		"code": "F0001"
+	},
+	"ai6": {
+		"type": "default",
+
+		"min": 0,
+		"max": 24,
+		"unit": "mA",
+		"code": "E0002"
+	},
+	"ai7": {
+		"type": "default",
+
+		"min": 0,
+		"max": 24,
+		"unit": "mA",
+		"code": "E0003"
+	},
+	"ai8": {
+		"type": "default",
+
+		"min": 0,
+		"max": 24,
+		"unit": "mA",
+		"code": "E0004"
+	},
+	"pressure": {
+		"min": 0,
+		"max": 100,
+		"unit": "Bar",
+		"code": "P0002"
+	},
+	"diff_pressure": {
+
+		"min": 0,
+		"max": 100000,
+
+		"unit": "mmH2O",
+		"code": "P0002"
+	},
+	"temperature": {
+
+		"min": -200,
+		"max": 200,
+		"unit": "℃",
+		"code": "P0002"
+	},
+	"voltage": {
+		"min": 0,
+		"max": 1000,
+		"unit": "V"
+	},
+	"current": {
+		"min": 0,
+		"max": 1000,
+		"unit": "A",
+		"code": "P0002"
+	},
+	"active_power": {
+		"min": 0,
+		"max": 1000000,
+		"unit": "W"
+	},
+	"energy": {
+		"min": 0,
+		"max": 1000000,
+		"unit": "Wh"
+	}
+}
