@@ -39,7 +39,7 @@ src디렉토리에 *sensors.json 파일(new_sensros.json/ lora_sensors.json/ mod
 |'topic' | String | 발행할 메시지의 토픽(TOPIC)명 | 'tharx/combo/data/lap01' |
 |'interval' | Interval | 메시지 발행 시간간격(단위 : 초) | 5 |
 
-**combo_sensors.json]**
+**[combo_sensors.json]**
 | Key | Data Type | Description |
 |-----|-----------|-------------|
 |'di1'| Object | DI1 데이터 생성 옵션 |
@@ -64,7 +64,7 @@ src디렉토리에 *sensors.json 파일(new_sensros.json/ lora_sensors.json/ mod
 |'value'| Object | 임의의 값을 생성하지 않고 항상 고정값을 사용(value가 존재하는 경우 min,max는 무시됨) |
 
 
-**new_sensors.json]**
+**[new_sensors.json]**
 | Key | Data Type | Description |
 |-----|-----------|-------------|
 |'id'| Object | combo device id |
